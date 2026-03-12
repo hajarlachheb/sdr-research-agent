@@ -1,0 +1,28 @@
+# Core
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# LangGraph & LLM
+langgraph>=0.0.40
+langchain-core>=0.1.0
+langchain-openai>=0.0.5
+
+# Vector store (optional)
+pgvector>=0.2.4
+sqlalchemy>=2.0.25
+
+# Job queue
+redis>=5.0.0
+
+# Scraping
+firecrawl-py>=0.0.16
+beautifulsoup4>=4.12.0
+httpx>=0.26.0
+
+# UI
+streamlit>=1.29.0
+
+# Utilities
+python-dotenv>=1.0.0
