@@ -63,3 +63,31 @@ def set_job_result(job_id: str, research: ResearchData | None, draft: EmailDraft
         critique_rounds=rounds,
         error=error,
     )
+
+
+# ---- Research cache (by domain) ----
+
+RESEARCH_CACHE_PREFIX = "research:"
+
+
+def get_research_cache(domain: str) -> ResearchData | None:
+    """Return cached ResearchData for domain, or None."""
+    try:
+        r = get_redis()
+        raw = r.get(f"{RESEARCH_CACHE_PREFIX}{domain}")
+        if not raw:
+            return None
+        return ResearchData.model_validate(json.loads(raw))
+    except Exception:
+        return None
+
+
+def set_research_cache(domain: str, research: ResearchData, ttl_seconds: int | None = None) -> None:
+    """Cache research by domain. TTL from settings if not provided."""
+    try:
+        r = get_redis()
+        key = f"{RESEARCH_CACHE_PREFIX}{domain}"
+        r.set(key, json.dumps(research.model_dump()))
+        r.expire(key, ttl_seconds if ttl_seconds is not None else settings.research_cache_ttl_seconds)
+    except Exception:
+        pass

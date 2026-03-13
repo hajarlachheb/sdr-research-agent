@@ -2,8 +2,8 @@
 """Convenience runner - sync research without Redis for quick testing."""
 
 import asyncio
-import json
 import sys
+import uuid
 
 from app.agents.graph import create_research_graph
 
@@ -13,12 +13,13 @@ async def main():
     print(f"Researching {url}...")
 
     graph = create_research_graph()
+    config = {"configurable": {"thread_id": str(uuid.uuid4())}}
     state = await graph.ainvoke({
         "company_url": url,
         "company_name": None,
         "ceo_name": None,
         "messages": [],
-    })
+    }, config=config)
 
     research = state.get("research")
     draft = state.get("email_draft")

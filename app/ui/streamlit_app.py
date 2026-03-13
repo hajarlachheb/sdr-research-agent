@@ -19,6 +19,7 @@ def main():
         help="Enter the company's website URL",
     )
     company_name = st.text_input("Company name (optional)", placeholder="Stripe")
+    ceo_name = st.text_input("CEO / contact name (optional)", placeholder="Patrick Collison", help="Used for personalization and to search for recent mentions")
     use_sync = st.checkbox("Run synchronously (no Redis)", value=True, help="Skip queue for quick testing")
 
     if st.button("Generate Cold Email", type="primary"):
@@ -35,6 +36,7 @@ def main():
                             json={
                                 "company_url": company_url,
                                 "company_name": company_name or None,
+                                "ceo_name": ceo_name or None,
                             },
                         )
                         r.raise_for_status()
@@ -46,6 +48,7 @@ def main():
                             json={
                                 "company_url": company_url,
                                 "company_name": company_name or None,
+                                "ceo_name": ceo_name or None,
                             },
                         )
                         submit.raise_for_status()

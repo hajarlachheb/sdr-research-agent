@@ -19,9 +19,12 @@ An AI-powered multi-agent system that:
 └─────────────┘     └─────────────┘     └─────────────┘
        │                    │                    │
        ▼                    ▼                    ▼
-  Firecrawl/Scrape    Quality Check         Email Draft
-  pgvector store      Loop until OK         Output
+  Scrape + DuckDuckGo  Quality Check       Email Draft
+  Redis cache (48h)    Loop until OK       (uses CEO name)
 ```
+
+- **Researcher**: Scrapes homepage and follows news/blog links; runs DuckDuckGo search for company news; optionally searches for CEO mentions. Results cached in Redis by domain.
+- **Writer**: Uses company research and optional CEO name for personalized greeting and body.
 
 ## Tech Stack
 

@@ -1,5 +1,6 @@
 """FastAPI application for SDR Research Agent."""
 
+import uuid
 from datetime import datetime
 from typing import Any
 
@@ -93,7 +94,8 @@ async def research_sync(req: ResearchRequest):
         "messages": [],
     }
     try:
-        final_state = await graph.ainvoke(initial_state)
+        config = {"configurable": {"thread_id": str(uuid.uuid4())}}
+        final_state = await graph.ainvoke(initial_state, config=config)
         return {
             "research": final_state.get("research"),
             "email_draft": final_state.get("email_draft"),

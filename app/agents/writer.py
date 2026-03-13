@@ -22,6 +22,7 @@ async def writer_node(state: dict) -> dict:
     research: ResearchData = state["research"]
     critique: CritiqueResult | None = state.get("critique")
     round_num = state.get("round", 0)
+    ceo_name = (state.get("ceo_name") or "").strip()
 
     llm = get_llm(temperature=0.5)
 
@@ -29,23 +30,26 @@ async def writer_node(state: dict) -> dict:
 Company: {research.company_name}
 Summary: {research.company_summary}
 Key topics: {", ".join(research.key_topics) if research.key_topics else "N/A"}
-
-Recent news/snippets:
 """
+    if ceo_name:
+        research_context += f"Recipient (CEO/decision maker): {ceo_name}\n"
+
+    research_context += "\nRecent news/snippets:\n"
     for a in research.news_articles[:5]:
         research_context += f"\n- {a.title}: {a.snippet[:200]}..."
 
     if research.linkedin_posts:
-        research_context += "\n\nCEO/Leadership posts:\n"
+        research_context += "\n\nCEO/executive mentions (quotes, interviews):\n"
         for p in research.linkedin_posts[:3]:
             research_context += f"- {p.content[:300]}...\n"
 
+    recipient_line = f" to {ceo_name} at {research.company_name}" if ceo_name else f" to the CEO/decision maker at {research.company_name}"
     prompt = f"""{WRITER_SYSTEM}
 
 Research context:
 {research_context}
 
-Generate a personalized cold email to the CEO/decision maker at {research.company_name}.
+Generate a personalized cold email{recipient_line}. Use their name in the greeting if provided (e.g. Hi {ceo_name}).
 """
     if critique and round_num > 0:
         prompt += f"""
